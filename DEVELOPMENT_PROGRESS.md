@@ -55,7 +55,7 @@
 - Tests executed: Chromium/Playwright standalone preview at 1920, 1440, 1280, 1024, 768, 390 and 320 px for dashboard and members; hover geometry, scroll progress, section reveal, scroll reset, reduced motion and mobile touch. Completed, failed and pending payout regression checks passed. No page errors in tested scenarios. Node financial tests: 3/3 passed.
 - Blocker: production build attempted; Vite is not installed in this environment (`vite: not found`). Install dependencies and run `npm run build` locally. Cross-browser and full accessibility audits remain pending. No live APIs, real transactions, backend changes or deployment.
 
-## V7 — Feature-based architecture (current)
+## V7 — Feature-based architecture
 - Refactored the uploaded NYRO-Frontend V6 source, preserving design positions, styles, responsive behaviors, logo, hover/scroll animation and the local demo feature scope.
 - Replaced the monolithic element-builder/class App with JSX feature pages/components, independent layout/member/transaction/payment hooks, pure domain helpers, isolated fixtures and focused stylesheets. Shared wallet/transaction state remains atomic by design.
 - Added configurable Laravel-ready HTTP transport, safe environment example and integration documentation. No endpoints/auth mode guessed; transport deliberately unused by mock UI.
@@ -63,3 +63,11 @@
 - Decisions: retain JavaScript/React 18/Vite 6 and current in-memory navigation instead of a framework/router migration; no new package dependencies. Existing V6 source ZIP preserved unchanged. No backend files, live APIs or Git operations touched.
 - Pending: team-approved API contracts, auth/permissions, URL routing, API adapters and sandbox integration, installed Vite build, full accessibility/performance/cross-browser/security testing.
 - V7 verification complete: 16/16 Node tests; 28/28 viewport checks over four screens; the executed Chromium workflow suite passed with zero page errors. Desktop overview, directory and member profile matched the original V6 pixel-for-pixel in the same reduced-motion comparison. The Vite build is still blocked by unavailable dependencies, not claimed successful.
+
+## Signature login (26 Nov 2026)
+
+- Added a centered NYRO login with the official logo, a frosted ivory card, and a navy and royal-blue backdrop inspired by the logo and wallet contours. Continuous background motion can be paused and respects the operating system's reduced-motion setting.
+- Added demo credential autofill, field validation, loading and retry feedback, password visibility, and sign-out from the workspace account drawer. The default session survives a reload in the same tab. Keep me signed in stores a demo session marker across browser restarts. Passwords are never written to browser storage.
+- Authentication remains front-end demo only. Password reset is unavailable while the Laravel authentication contract is pending. Signing out ends the session and clears the in-memory workspace state.
+- Vite production build passed and all 18 Node tests passed. Chromium was run against the live Vite frontend. The login stayed centered with no horizontal overflow at 1920, 1440, 1024, 768, 390, and 320px. Desktop and mobile screenshots were reviewed and the short mobile layout was tightened.
+- Chromium covered keyboard entry, validation, password visibility, loading, incorrect credentials, dashboard entry, wallet drawer and member directory access, both session storage modes, sign-out, pause and resume, and reduced motion. No page errors were reported. The software keyboard was approximated with a short mobile viewport. Physical-device, full accessibility, and live Laravel testing remain pending.

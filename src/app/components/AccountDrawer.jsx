@@ -30,5 +30,6 @@ export function AccountDrawer({ state, actions }) {
       className="btn outline-btn wide"
       iconName="refresh"
     />
+    {actions.signOut && <Button label="Sign out" onClick={actions.signOut} className="btn outline-btn wide" />}
   </Drawer>;
 }

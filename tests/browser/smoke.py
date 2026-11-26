@@ -16,6 +16,10 @@ def load(page):
         page.set_content(Path(PREVIEW).read_text(encoding='utf-8'))
     else:
         page.goto(URL)
+        page.locator('.auth-card, .balance-value').first.wait_for()
+        if page.locator('.auth-card').count():
+            page.get_by_role('button', name='Use demo details').click()
+            page.get_by_role('button', name='Sign in', exact=True).click()
     page.locator('.balance-value').wait_for()
     page.wait_for_timeout(750)
 

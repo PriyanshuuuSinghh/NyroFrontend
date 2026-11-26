@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Sidebar } from '@shared/layout/Sidebar.jsx';
 import { Header } from '@shared/layout/Header.jsx';
 import { Icon } from '@shared/ui/Icon.jsx';
@@ -16,7 +16,8 @@ import { useWorkspaceKeyboard } from './hooks/useWorkspaceKeyboard.js';
 import { WorkspaceDrawers } from './components/WorkspaceDrawers.jsx';
 
 /** Composition root: feature hooks own their state; App only coordinates navigation. */
-export function App({ logo }) {
+export function App({ logo, onSignOut, justSignedIn }) {
+  const workspace = useRef(null);
   const layout = useWorkspaceLayout();
   const finance = useDemoFinance();
   const members = useMembers(layout.notify);
@@ -92,6 +93,10 @@ export function App({ logo }) {
     layout.scrollMotion.current?.refresh();
   }, [ui.page, members.state.memberRole]);
 
+  useEffect(() => {
+    if (justSignedIn) workspace.current?.focus({ preventScroll: true });
+  }, [justSignedIn]);
+
   const walletState = { wallets: finance.state.wallets, transactions: finance.state.transactions, hidden: ui.hidden, range: ui.range };
   const walletActions = { setState: layout.patch, navigate, detail };
   const memberActions = { ...members, setState: members.patch, selectRole, memberDetail, startCreate, createMember, close };
@@ -109,7 +114,7 @@ export function App({ logo }) {
   };
 
   return (
-    <div className={`app ${ui.collapsed ? 'compact-app' : ''} ${ui.ambientMotion ? '' : 'ambient-paused'}`}>
+    <div className={`app ${ui.collapsed ? 'compact-app' : ''} ${ui.ambientMotion ? '' : 'ambient-paused'} ${justSignedIn ? 'auth-workspace-enter' : ''}`}>
       {ui.mobile && <button
         className="mobile-scrim"
         aria-label="Close navigation overlay"
@@ -120,7 +125,7 @@ export function App({ logo }) {
         onClose={() => layout.patch({ mobile: false })} onHelp={() => open('help')}
         rolesOpen={ui.rolesOpen} role={members.state.memberRole}
         onRoles={() => layout.patch({ rolesOpen: ui.collapsed ? true : !ui.rolesOpen, collapsed: false })} onRole={selectRole} />
-      <main className="main-workspace">
+      <main className="main-workspace" ref={workspace} tabIndex={justSignedIn ? -1 : undefined}>
         <Header page={ui.page} onMenu={() => layout.patch({ mobile: true, collapsed: false })}
           onSearch={() => open('search')} onNotify={() => open('notifications')} onProfile={() => open('profile')} />
         <div key={ui.page} className="page-stage">{pages[ui.page] || pages.overview}</div>
@@ -133,7 +138,7 @@ export function App({ logo }) {
 
         memberState={members.state}
         memberActions={memberActions}
-        actions={{ setState: layout.patch, close, navigate, resetDemo }}
+        actions={{ setState: layout.patch, close, navigate, resetDemo, signOut: onSignOut }}
       />
       {ui.toast && <div className="toast" role="status"><Icon name="check" size={18} />{ui.toast}</div>}
     </div>

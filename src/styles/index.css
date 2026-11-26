@@ -13,5 +13,6 @@
 @import "../features/members/directory.css";
 @import "../features/members/member-form.css";
 @import "../features/members/profile.css";
+@import "../features/auth/auth.css";
 @import "../styles/overlays.css";
 @import "../styles/motion.css";
