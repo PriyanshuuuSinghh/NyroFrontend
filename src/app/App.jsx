@@ -16,7 +16,7 @@ import { useWorkspaceKeyboard } from './hooks/useWorkspaceKeyboard.js';
 import { WorkspaceDrawers } from './components/WorkspaceDrawers.jsx';
 
 /** Composition root: feature hooks own their state; App only coordinates navigation. */
-export function App({ logo, onSignOut, justSignedIn }) {
+export function App({ logo, onSignOut, isEntering, justSignedIn }) {
   const workspace = useRef(null);
   const layout = useWorkspaceLayout();
   const finance = useDemoFinance();
@@ -88,7 +88,7 @@ export function App({ logo, onSignOut, justSignedIn }) {
     layout.notify('Demo data reset.');
   }
 
-  useWorkspaceKeyboard({ drawer: ui.drawer, busy: finance.state.busy, openSearch: () => open('search'), close, closeMobile: () => layout.patch({ mobile: false }) });
+  useWorkspaceKeyboard({ drawer: ui.drawer, busy: isEntering || finance.state.busy, openSearch: () => open('search'), close, closeMobile: () => layout.patch({ mobile: false }) });
   useEffect(() => {
     layout.scrollMotion.current?.refresh();
   }, [ui.page, members.state.memberRole]);
@@ -114,7 +114,7 @@ export function App({ logo, onSignOut, justSignedIn }) {
   };
 
   return (
-    <div className={`app ${ui.collapsed ? 'compact-app' : ''} ${ui.ambientMotion ? '' : 'ambient-paused'} ${justSignedIn ? 'auth-workspace-enter' : ''}`}>
+    <div className={`app ${ui.collapsed ? 'compact-app' : ''} ${ui.ambientMotion ? '' : 'ambient-paused'} ${isEntering ? 'auth-workspace-enter' : ''}`} inert={isEntering ? '' : undefined}>
       {ui.mobile && <button
         className="mobile-scrim"
         aria-label="Close navigation overlay"

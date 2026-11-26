@@ -71,3 +71,30 @@
 - Authentication remains front-end demo only. Password reset is unavailable while the Laravel authentication contract is pending. Signing out ends the session and clears the in-memory workspace state.
 - Vite production build passed and all 18 Node tests passed. Chromium was run against the live Vite frontend. The login stayed centered with no horizontal overflow at 1920, 1440, 1024, 768, 390, and 320px. Desktop and mobile screenshots were reviewed and the short mobile layout was tightened.
 - Chromium covered keyboard entry, validation, password visibility, loading, incorrect credentials, dashboard entry, wallet drawer and member directory access, both session storage modes, sign-out, pause and resume, and reduced motion. No page errors were reported. The software keyboard was approximated with a short mobile viewport. Physical-device, full accessibility, and live Laravel testing remain pending.
+
+## Login visual refinement (26 Nov 2026)
+
+- Replaced the monogram backdrop with layered navy and royal-blue SVG ribbons, fine contours, and restrained orange highlights. Both animated layers use the existing pause control and respect reduced motion.
+- Refined the frosted card, focus and press feedback, and mobile spacing. Blended the matte of the original logo into the card with CSS and matched the browser autofill fill to each input's surface.
+- All 18 Node tests and the Vite production build passed. Chromium checks passed at 1920, 1440, 1024, 768, 390, and 320px. Desktop and mobile renders were reviewed before and after softening the ribbons and refining the input edge. Chromium also verified both inputs in the browser's autofill state, keyboard focus, validation, demo sign-in, sign-out, session persistence, wallet and member navigation, and pause and reduced-motion behavior.
+
+## Premium login + OTP (26 Nov 2026)
+
+- Added the ivory glass login, layered polygon scene, pointer depth, and motion controls. The demo flow checks credentials before showing OTP, limits wrong-code attempts, and saves a session marker only after successful verification.
+- The OTP dialog supports keyboard entry, paste, resend, cancellation, and focus restoration. The dashboard mounts behind the verified state and receives focus when the handoff ends. Reduced motion uses an opacity-only crossfade.
+- The production build passed and all 23 Node tests passed. The full Playwright smoke suite passed against the running Vite app, including wrong and correct OTP, directory and profile checks, simulated payouts and top-ups, transaction search and CSV export, and reduced motion. No browser page errors were reported.
+- Chromium layout checks covered 1920, 1440, 1024, 768, 390, and 320px. Resizing emulated mobile viewports to 320px tall kept Sign in and Verify reachable by scrolling. Sampled text contrast was at least 6.71:1 across the two glass surfaces. Chromium recorded zero paint, raster, or layout events during a 1.45-second idle backdrop trace.
+- Tested in Chromium with viewport emulation. Physical mobile keyboards, screen-reader speech, other browsers, and the live Laravel adapter remain unverified.
+
+### Files by phase
+
+| Phase | Files |
+| --- | --- |
+| 1. Polygon backdrop | `LoginBackdrop.jsx`, `auth.css` |
+| 2. Glass card | `LoginPage.jsx`, `auth.css` |
+| 3. Pointer depth | `usePointerDepth.js`, `LoginPage.jsx`, `auth.css` |
+| Ivory glass revisions | `LoginBackdrop.jsx`, `LoginPage.jsx`, `auth.css` |
+| 4. Demo OTP | `authFlow.js`, `otpRules.js`, `useDemoAuth.js`, `demoAuthService.js`, `AuthGate.jsx`, `LoginPage.jsx`, `tests/otp.test.js` |
+| 5. OTP dialog | `OtpModal.jsx`, `OtpInput.jsx`, `useFocusTrap.js`, `LoginPage.jsx`, `auth.css`, `AuthGate.jsx`, `useDemoAuth.js`, `authFlow.js` |
+| 6. Dashboard handoff | `OtpModal.jsx`, `AuthGate.jsx`, `LoginPage.jsx`, `useDemoAuth.js`, `authFlow.js`, `auth.css`, `App.jsx`, `main.jsx` |
+| 7. Verification and polish | `OtpModal.jsx`, `auth.css`, `tests/browser/smoke.py`, `docs/ARCHITECTURE.md`, `DEVELOPMENT_PROGRESS.md` |

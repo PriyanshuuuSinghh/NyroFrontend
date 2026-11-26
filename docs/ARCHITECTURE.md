@@ -13,6 +13,13 @@ src/
     components/                 Workspace dialogs and dialog dispatcher
     hooks/                      Layout state, focus, shortcuts, scroll setup
   features/
+    auth/
+      components/               Auth gate, login form, backdrop, OTP dialog and code inputs
+      pages/                    Login composition and modal focus restoration
+      hooks/                    Demo auth requests, focus trapping and pointer depth
+      domain/                   Auth state transitions, credential validation and OTP rules
+      services/                 Simulated verification and demo session storage
+      auth.css
     dashboard/                  Overview page, cash-flow widget, sample chart data
     wallets/                    Wallet panel, animated balance hook, sample balances
     services/                   Service launcher and service definitions
@@ -45,6 +52,12 @@ src/
 ```
 
 Feature pages consume only their relevant state/actions. `App.jsx` composes the hooks, passes the feature slices to their pages and coordinates navigation and dialogs; domain functions do not import React. Member state is separate from payments. Wallet and transaction records share one demo ledger hook intentionally so a simulated payment changes both atomically. Display-only animation is separate from the integer-paise amount used by finance rules. Transaction list filtering and export are pure utilities.
+
+### Demo authentication
+
+`main.jsx` composes the workspace with `AuthGate`. The auth reducer moves through credential checking, OTP checking, success, and entry. The browser stores a demo session marker only after OTP verification. Keep me signed in uses local storage, while the default uses session storage. Sign-out clears both markers. Passwords and codes stay out of browser storage.
+
+`useDemoAuth` calls the demo service, cancels pending verification when the challenge closes, and completes dashboard entry after the transition. The OTP modal handles code entry and focus. CSS handles the glass, backdrop, and reduced-motion presentation. A future Laravel adapter will need the approved authentication contract and server-side session and retry enforcement.
 
 ### Dependency direction
 

@@ -4,12 +4,23 @@ Install Python Playwright and Chromium separately; no npm test dependency is add
 """
 import os
 from pathlib import Path
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import expect, sync_playwright
 
 URL = os.getenv('NYRO_TEST_URL', 'http://localhost:5173')
 PREVIEW = os.getenv('NYRO_PREVIEW_HTML')
 CHROMIUM = os.getenv('NYRO_CHROMIUM_PATH')
 WIDTHS = [1920, 1440, 1280, 1024, 768, 390, 320]
+
+def begin_otp(page):
+    page.get_by_role('button', name='Use demo details').click()
+    page.get_by_role('button', name='Sign in', exact=True).click()
+    dialog = page.get_by_role('dialog', name='Verify it’s you')
+    dialog.wait_for()
+    return dialog
+
+def fill_otp(dialog, code):
+    for number, digit in enumerate(code, start=1):
+        dialog.get_by_role('textbox', name=f'Digit {number} of 6').fill(digit)
 
 def load(page):
     if PREVIEW:
@@ -18,8 +29,8 @@ def load(page):
         page.goto(URL)
         page.locator('.auth-card, .balance-value').first.wait_for()
         if page.locator('.auth-card').count():
-            page.get_by_role('button', name='Use demo details').click()
-            page.get_by_role('button', name='Sign in', exact=True).click()
+            fill_otp(begin_otp(page), '123456')
+            expect(page.locator('.auth-page')).to_have_count(0)
     page.locator('.balance-value').wait_for()
     page.wait_for_timeout(750)
 
@@ -43,6 +54,24 @@ with sync_playwright() as playwright:
         page = browser.new_page(viewport={'width': width, 'height': 900}, reduced_motion=motion, accept_downloads=True)
         page.on('pageerror', lambda error: errors.append(str(error)))
         return page
+
+    if not PREVIEW:
+        page = new_page(390)
+        page.goto(URL)
+        dialog = begin_otp(page)
+        expect(dialog.get_by_role('textbox', name='Digit 1 of 6')).to_be_focused()
+        fill_otp(dialog, '000000')
+        expect(dialog.get_by_role('status')).to_have_text('Incorrect demo code. Try again.')
+        expect(dialog.get_by_role('textbox', name='Digit 1 of 6')).to_be_focused()
+        for box in dialog.get_by_role('textbox').all():
+            expect(box).to_have_value('')
+        assert page.evaluate('sessionStorage.getItem("nyro.demo-auth") === null && localStorage.getItem("nyro.demo-auth") === null')
+        assert page.locator('.app').count() == 0
+        fill_otp(dialog, '123456')
+        expect(page.locator('.auth-page')).to_have_count(0)
+        expect(page.locator('.main-workspace')).to_be_focused()
+        page.close()
+        print('PASS: wrong OTP, input reset, and verified dashboard entry', flush=True)
 
     for width in WIDTHS:
         page = new_page(width)

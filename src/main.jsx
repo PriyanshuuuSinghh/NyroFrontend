@@ -8,6 +8,8 @@ const logo = `${import.meta.env.BASE_URL}nyro-logo.png`;
 
 createRoot(document.getElementById('root')).render(
   <AuthGate logo={logo}>
-    {({ signOut, justSignedIn }) => <App logo={logo} onSignOut={signOut} justSignedIn={justSignedIn} />}
+    {({ signOut, isEntering, justSignedIn }) => (
+      <App logo={logo} onSignOut={signOut} isEntering={isEntering} justSignedIn={justSignedIn} />
+    )}
   </AuthGate>,
 );
