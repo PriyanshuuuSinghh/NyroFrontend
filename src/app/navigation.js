@@ -1,0 +1,1 @@
+export const navGroups = [{ label: 'WORKSPACE', items: [['Overview', 'overview', 'overview'], ['Wallets', 'wallet', 'wallets'], ['Transactions', 'transfer', 'transactions']] }, { label: 'MONEY MOVEMENT', items: [['Payout', 'arrowup', 'payout'], ['Add money', 'plus', 'add'], ['Services', 'grid', 'services']] }];
