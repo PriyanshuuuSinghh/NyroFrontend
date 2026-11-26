@@ -12,7 +12,7 @@ export function ServiceLauncher({ onAction, full = false }) {
     />
     <div className="service-grid">
       {serviceList.map(s => <button key={s.action} className="service-tile" onClick={() => onAction(s.action)}>
-        <span className={`service-icon ${s.action === 'payout' ? 'primary-icon' : ''}`}>
+        <span className="service-icon">
           <Icon name={s.icon} size={22} />
         </span>
         <span className="service-copy">
